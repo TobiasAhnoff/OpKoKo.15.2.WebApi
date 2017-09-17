@@ -10,6 +10,7 @@ using OpKokoDemo.Services;
 
 namespace OpKokoDemo.Controllers
 {
+    [Route("[controller]")]
     public class ProductController : Controller
     {
         private readonly IProductService _service;

@@ -7,7 +7,7 @@ using OpKokoDemo.Services;
 
 namespace OpKokoDemo.Controllers
 {
-    [Route("myservice")]
+    [Route("ping")]
     public class PingServiceController : Controller
     {
         private readonly IPingService _pingService;
@@ -16,6 +16,12 @@ namespace OpKokoDemo.Controllers
         {
             _pingService = pingService;
         }
+
+        [HttpGet]
+        public string Ping() {
+            return "ping";
+        }
+
         // POST api/values
         [HttpPost("{id:int}/execute")]
         [Description("Ping uri with a retry limit")]

@@ -11,7 +11,7 @@ Tobias:
 - Auktorisation
 - Middleware (Request/Response) ersätt filter
 - System.Diagnostics.Errorpage?
-- CORS
++ CORS
 
 Extra:
 - Hosting

@@ -49,6 +49,19 @@ namespace OpKokoDemo
                 ////app.UseDeveloperExceptionPage();
             }
 
+            #region CORS
+            //#1 - CORS
+            //TODO: Get origin white list from config
+            //Note that origins URL:s must not end with a "/"
+            app.UseCors(
+                builder => builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins("https://localhost:44304")
+
+            );
+            #endregion
+
             app.UseMvc();
         }
     }
