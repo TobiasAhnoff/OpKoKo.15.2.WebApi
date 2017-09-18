@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpKokoDemo.Requests;
 using OpKokoDemo.Responses;
@@ -18,6 +19,7 @@ namespace OpKokoDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public string Ping() {
             return "ping";
         }

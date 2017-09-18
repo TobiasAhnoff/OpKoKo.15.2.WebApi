@@ -10,6 +10,7 @@ namespace OpKokoDemo.Extensions
     {
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
             services.Configure<PingServiceConfig>(configuration.GetSection("PingService"));
             services.Configure<ProductServiceOptions>(configuration.GetSection("ProductService"));
 
