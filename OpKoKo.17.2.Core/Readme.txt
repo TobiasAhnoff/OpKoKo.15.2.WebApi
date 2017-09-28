@@ -12,12 +12,13 @@ Tobias:
 - Middleware (Request/Response) ersätt filter med DelagationHandler?
 + Jwt Autentisering
 + JWTGenerator
-- Cert
-- Auktorisation
++ Cert
++ Auktorisation
 + Microsoft.Diagnostics.Errorpage
 + CORS
 
 Extra:
+- Pipeline och middleware
 - Hosting
 - DI
 

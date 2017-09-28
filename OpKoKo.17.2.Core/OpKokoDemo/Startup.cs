@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
+using OpKokoDemo.Services;
 using Serilog;
 
 namespace OpKokoDemo
@@ -97,7 +98,7 @@ namespace OpKokoDemo
         #region 2 - Trust (JWT)
         private static TokenValidationParameters GetTokenValidationParameters(
             string signingCertificateSubjectDistinguishedName, string issuer, string audience) {
-            var signingCert = GetSigningCertifacate(signingCertificateSubjectDistinguishedName);
+            var signingCert = Utils.GetCertFromCertStore(signingCertificateSubjectDistinguishedName);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -111,25 +112,6 @@ namespace OpKokoDemo
                 ClockSkew = TimeSpan.FromMinutes(5)
             };
             return tokenValidationParameters;
-        }
-
-        public static X509Certificate2 GetSigningCertifacate(string signingCertificateSubjectDistinguishedName) {
-            //TODO
-            //Azure uses the cert store of the current user and there is no easy way to add a self-signed cert to trusted people...
-            //thus validOnly needs to be set to false when unsing a self-signed cert.
-            //https://azure.microsoft.com/en-us/blog/using-certificates-in-azure-websites-applications/
-            //Maybe somthing like this could solve the problem
-            //http://leastprivilege.com/2011/03/01/adding-a-certificate-to-the-root-certificate-store-from-the-command-line-e-g-as-an-azure-startup-task/
-
-            //Create signign cert with
-            //https://brockallen.com/2015/06/01/makecert-and-creating-ssl-or-signing-certificates/
-
-            //var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-            store.Open(OpenFlags.ReadOnly);
-            var certificate = store.Certificates.Find(X509FindType.FindBySubjectDistinguishedName, signingCertificateSubjectDistinguishedName, false)[0];
-
-            return certificate;
         }
         #endregion
     }
