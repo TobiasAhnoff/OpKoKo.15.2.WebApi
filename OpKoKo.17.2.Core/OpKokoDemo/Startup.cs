@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +39,11 @@ namespace OpKokoDemo
 
             #region 2 - Trust (JWT)
             //TODO: Config pattern?
-            services.AddAuthentication(options => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = GetTokenValidationParameters(
@@ -53,11 +55,10 @@ namespace OpKokoDemo
 
             // Only allow authenticated users using the JWT Bearer scheme
             var requireBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
 
-            services.AddMvc().AddMvcOptions(
+            services.AddMvc(
                 options =>
                 {
                     options.Filters.Add(new RequestLoggingFilter());
@@ -89,8 +90,7 @@ namespace OpKokoDemo
             );
             #endregion
             
-            //TODO: not needed?
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseMvc();
         }
