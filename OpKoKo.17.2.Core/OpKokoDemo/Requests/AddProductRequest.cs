@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using OpKokoDemo.Attributes;
 
 namespace OpKokoDemo.Requests
 {
     [AddProductValidator]
-    public class AddProductRequest
+    public class AddProductRequest : Request
     {
         [Required]
         public int MerchantId { get; set; }

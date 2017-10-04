@@ -16,29 +16,17 @@ namespace OpKokoDemo.Services
             SeedProducts();
         }
 
-        public Task<Product> GetProduct(int merchantId, int id)
+        public Task<IEnumerable<Product>> GetProducts(int merchantId, Language language)
         {
-            return Task.FromResult(_products.First(p => p.MerchantId == merchantId && p.Id == id));
+            return Task.FromResult(_products.Where(p => p.MerchantId == merchantId && p.Language == language));
         }
 
-        public Task<IEnumerable<Product>> GetProducts(int merchantId)
+        public Task<Product> AddProduct(Product product)
         {
-            return Task.FromResult(_products.Where(p => p.MerchantId == merchantId));
-        }
+            product.Id = _products.OrderByDescending(p => p.Id).First().Id + 1;
+            _products.Add(product);
 
-        public Task<Product> AddProduct(AddProductRequest request)
-        {
-            var produkt = new Product
-            {
-                Id = _products.Count + 1,
-                Language = (Language) Enum.Parse(typeof(Language), request.Language, false),
-                MerchantId = request.MerchantId,
-                Name = request.Name,
-                Price = request.Price
-            };
-            _products.Add(produkt);
-
-            return Task.FromResult(produkt);
+            return Task.FromResult(product);
         }
 
         public Task DeleteProduct(int merchantId, int id)
@@ -68,13 +56,13 @@ namespace OpKokoDemo.Services
         {
             if (index < 33)
             {
-                return Language.Se;
+                return Language.SE;
             }
             if (index < 66)
             {
-                return Language.Dk;
+                return Language.DK;
             }
-            return Language.No;
+            return Language.NO;
         }
 
         private int GetMerchant(int index)

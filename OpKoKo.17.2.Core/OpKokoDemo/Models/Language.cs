@@ -7,8 +7,8 @@ namespace OpKokoDemo.Models
 {
     public enum Language
     {
-        Se,
-        No,
-        Dk
+        SE,
+        NO,
+        DK
     }
 }

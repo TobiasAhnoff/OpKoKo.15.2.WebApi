@@ -10,7 +10,7 @@ using OpKokoDemo.Services;
 
 namespace OpKokoDemo.Controllers
 {
-    [Route("[controller]")]
+    [Route("products")]
     public class ProductController : Controller
     {
         private readonly IProductService _service;
@@ -20,17 +20,15 @@ namespace OpKokoDemo.Controllers
         }
 
         // POST api/values
-        [HttpPost("{id:int}/execute")]
+        [HttpPost("{merchantId:int}")]
         [Description("Ping uri with a retry limit")]
         public async Task<IActionResult> Post(int merchantId, [FromBody] AddProductRequest request)
         {
             if (request == null)
                 return BadRequest();
 
-            var res = await _service.AddProducts();
-            return null;
-            ////return new OkObjectResult(new ExecuteServiceResponse { Counter = res, ElapsedMilliseconds = res.Item2 });
+            return new OkObjectResult(await _service.AddProducts(request));
         }
-
+        
     }
 }
