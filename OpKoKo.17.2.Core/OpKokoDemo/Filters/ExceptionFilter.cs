@@ -15,6 +15,8 @@ namespace OpKokoDemo.Filters
         {
             { typeof(ArgumentException), e => new ExceptionResult(ErrorTexts.ValidationErrorCode, e.Message, 400) },
             { typeof(BadRequestException), e => new ExceptionResult(ErrorTexts.BadRequestErrorCode, e.Message, 400) },
+            { typeof(NotImplementedException), e => new ExceptionResult(ErrorTexts.NotImplementedCode, ErrorTexts.NotImplementedMessage, 501) }
+            
         };
 
         public void OnActionExecuted(ActionExecutedContext context)

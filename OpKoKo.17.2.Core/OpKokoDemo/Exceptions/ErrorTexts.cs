@@ -15,5 +15,7 @@
         public const string ConflictErrorMessage = "The request could not be completed due to a conflict with the current state of the target resource";
         public const string NotFoundErrorCode = "NotFound";
         public const string NotFoundErrorCodeMessage = "One or more of the underlying resources could not be found";
+        public const string NotImplementedCode = "Not_Implemented";
+        public const string NotImplementedMessage = "The resource does not implement the request in the current checkout state";
     }
 }

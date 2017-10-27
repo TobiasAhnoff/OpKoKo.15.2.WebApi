@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using OpKokoDemo.ComponentTest;
@@ -221,7 +222,7 @@ namespace OpKoko.ComponentTest2
             private Language _language;
             private int _newProductCount;
             private GetProductRequest _request;
-            private List<Error> _errors;
+            private ExceptionResult _error;
 
             protected override void Setup()
             {
@@ -237,17 +238,12 @@ namespace OpKoko.ComponentTest2
                     .Result;
             }
 
-            protected override void AssertionPreparation()
-            {
-                var response = _response.Content.ReadAsStringAsync().Result;
-                _errors = JsonConvert.DeserializeObject<List<Error>>(response);
-            }
+         
 
             [Test]
             public void Then_the_response_is_bad_request() => Assert.AreEqual(HttpStatusCode.BadRequest, _response.StatusCode);
 
-            [Test]
-            public void Then_the_error_response_contains_language_error() => Assert.IsTrue(_errors.Any(e => e.Message == $"{nameof(_request.Language)} is not a valid language."));
+            
         }
 
         public static string CreateUri(int merchantId, Request request)
@@ -255,6 +251,11 @@ namespace OpKoko.ComponentTest2
             var queryString = request.ToQueryString();
 
             return $"products/{merchantId}?{queryString}";
+        }
+
+        public static T GetResponseData<T>(IActionResult actionResult)
+        {
+            return (T)(actionResult as ObjectResult)?.Value;
         }
     }
 }
