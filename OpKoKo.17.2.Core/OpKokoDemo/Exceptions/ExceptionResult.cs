@@ -17,7 +17,7 @@ namespace OpKokoDemo.Exceptions
             HttpStatusCode = 500;
             HttpStatusMessage = HttpStatusCodeTexts.StatusCodes[HttpStatusCode];
             Reason = "UnhandledException";
-            Message = "An unhandled exception occured. Please contact Collector!";
+            Message = "An unhandled exception occured. Please contact somebody!";
         }
 
         public ExceptionResult(string reason, string message, int httpStatusCode)

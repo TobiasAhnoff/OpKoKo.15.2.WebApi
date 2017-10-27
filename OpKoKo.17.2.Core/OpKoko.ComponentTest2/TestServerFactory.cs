@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.TestHost;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using OpKokoDemo.Extensions;
+using OpKokoDemo.Filters;
+using OpKokoDemo.Validation;
 
 namespace OpKokoDemo.ComponentTest
 {
@@ -35,25 +38,31 @@ namespace OpKokoDemo.ComponentTest
                 .ConfigureServices(
                     services =>
                     {
-                        services.AddMvc();
+                        services.AddMvc(options =>
+                        {
+                            options.Filters.Add(new ExceptionFilter());
+                            options.Filters.Add(new ModelStateValidatorFilter());
+                            options.Filters.Add(new RequestValidatorFilter());
+
+                            ////options.Filters.Add(new AuthorizeFilter(requireBearerAuthenticationPolicy));
+
+                        });
                         OverrideMvcDefaultControllerLocationProvider(services);
 
                         services.AddOptions();
                         services.AddServices(config);
                         services.AddRepositories();
                         services.SetupLogging();
+                        services.AddValidators();
 
 
-                      testSpecificServiceConfiguration?.Invoke(services);
+                        testSpecificServiceConfiguration?.Invoke(services);
                     })
                 .UseContentRoot(GetProjectPath(startupAssembly))
                 .UseEnvironment("Development")
                 .Configure(
                     app =>
                     {
-                        //app.UseFakeHttpContextMiddleware();
-                        //app.UseMiddleware<SerilogHttpContextMiddleware>();
-                        //app.UseAuthentication();
                         app.UseMvc();
                     });
 

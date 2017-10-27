@@ -8,11 +8,11 @@ namespace OpKokoDemo.Services
 {
     public interface IRepository
     {
-        Task<IEnumerable<Product>> GetProducts(int merchantId, Language language);
+        Task<IEnumerable<Product>> GetProducts(int merchantId, string pattern= null);
 
         Task<Product> AddProduct(Product produkt);
 
-        Task DeleteProduct(int merchantId, int id);
+        Task DeleteProduct(int merchantId, int productId);
 
     }
 }

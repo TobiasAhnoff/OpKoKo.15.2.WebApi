@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
 using OpKokoDemo.Services;
+using OpKokoDemo.Validation;
 using Serilog;
 
 namespace OpKokoDemo
@@ -36,6 +37,7 @@ namespace OpKokoDemo
             services.AddServices(Configuration);
             services.AddRepositories();
             services.SetupLogging();
+            services.AddValidators();
 
             #region 2 - Trust (JWT)
             //TODO: Config pattern?
@@ -64,6 +66,7 @@ namespace OpKokoDemo
                     options.Filters.Add(new RequestLoggingFilter());
                     options.Filters.Add(new ExceptionFilter());
                     options.Filters.Add(new ModelStateValidatorFilter());
+                    options.Filters.Add(new RequestValidatorFilter());
                     options.Filters.Add(new ResponseLoggingFilter());
                     options.Filters.Add(new AuthorizeFilter(requireBearerAuthenticationPolicy));
                 });   

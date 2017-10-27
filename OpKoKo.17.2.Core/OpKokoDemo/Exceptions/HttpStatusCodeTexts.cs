@@ -10,7 +10,7 @@ namespace OpKokoDemo.Exceptions
         public const string NotFound = "The resource requested was not found.";
         public const string Conflict = "The request could not be completed due to a conflict with the current state of the target resource.";
         public const string ResourceLocked = "The resource requested is currently locked for modification. Try again.";
-        public const string InternalServerError = "An unhandled exception has occured. Please contact Collector!";
+        public const string InternalServerError = "An unhandled exception has occured. Please contact somebody!";
         public const string ServiceUnavailable = "Service unavailable.";
         public const string BusinessError = "The request was rejected by the server due to a business error.";
         public static Dictionary<int, string> StatusCodes;
@@ -37,7 +37,7 @@ namespace OpKokoDemo.Exceptions
             string str6 = "The resource requested is currently locked for modification. Try again.";
             dictionary.Add(key6, str6);
             int key7 = 500;
-            string str7 = "An unhandled exception has occured. Please contact Collector!";
+            string str7 = "An unhandled exception has occured. Please contact somebody!";
             dictionary.Add(key7, str7);
             int key8 = 503;
             string str8 = "Service unavailable.";

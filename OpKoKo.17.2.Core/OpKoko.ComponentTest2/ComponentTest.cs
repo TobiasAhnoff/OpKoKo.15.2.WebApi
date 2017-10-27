@@ -6,17 +6,24 @@ using System.Text;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using OpKokoDemo.Services;
 using Ploeh.AutoFixture;
 
 namespace OpKokoDemo.ComponentTest
 {
     public abstract class ComponentTest
     {
+        public ComponentTest()
+        {
+            Fixture = new Fixture();
+        }
         protected TestServer Server { get; private set; }
 
         protected HttpClient Client { get; private set; }
 
         protected Fixture Fixture { get; }
+
+        protected IRepository Repository => (IRepository) Server.Host.Services.GetService(typeof(IRepository));
 
         protected virtual void Initialize()
         {
@@ -24,7 +31,7 @@ namespace OpKokoDemo.ComponentTest
 
         protected virtual Action<IServiceCollection> OverrideConfiguredServices()
         {
-            return services => { };
+            return services => {};
         }
 
         protected abstract void Setup();

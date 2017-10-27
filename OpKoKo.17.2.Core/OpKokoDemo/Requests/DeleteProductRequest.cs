@@ -9,9 +9,6 @@ namespace OpKokoDemo.Requests
     public class DeleteProductRequest
     {
         [Required]
-        public int MerchantId { get; set; }
-
-        [Required]
         public int ProductId { get; set; }
     }
 }

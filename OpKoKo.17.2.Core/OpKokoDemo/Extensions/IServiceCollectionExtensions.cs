@@ -1,13 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Linq;
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpKokoDemo.Config;
 using OpKokoDemo.Services;
+using OpKokoDemo.Validation;
 using Serilog;
 
 namespace OpKokoDemo.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        private static readonly Assembly ValidatorAssembly = typeof(GetProductRequestValidator).Assembly;
+
         public static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtServiceOptions>(configuration.GetSection("Jwt"));
@@ -31,6 +37,17 @@ namespace OpKokoDemo.Extensions
 
             services.AddLogging(loggingBuilder =>
                 loggingBuilder.AddSerilog(dispose: true));
+        }
+
+        public static void AddValidators(this IServiceCollection services)
+        {
+            var exportedTypes = ValidatorAssembly.GetExportedTypes();
+            var requestValidatorTypes = exportedTypes.Where(t => typeof(IRequestValidator).IsAssignableFrom(t) && !t.IsAbstract);
+
+            foreach (var requestValidatorType in requestValidatorTypes)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(IRequestValidator), requestValidatorType));
+            }
         }
     }
 }

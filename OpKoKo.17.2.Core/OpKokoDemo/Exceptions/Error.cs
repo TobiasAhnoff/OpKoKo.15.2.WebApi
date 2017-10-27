@@ -6,6 +6,8 @@
 
         public string Message { get; set; }
 
+        public string Property { get; set; }
+
         public Error()
         {
         }

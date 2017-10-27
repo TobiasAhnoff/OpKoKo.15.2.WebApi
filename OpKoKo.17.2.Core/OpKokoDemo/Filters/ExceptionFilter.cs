@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OpKokoDemo.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace OpKokoDemo.Filters
 {
@@ -23,18 +26,21 @@ namespace OpKokoDemo.Filters
             var isHandled = exception != null;
             var handler = isHandled ? _handlers[exception.GetType()] : _ => new ExceptionResult();
 
-            var result = handler.Invoke(exception);
-            context.Result = result;
+            var errorResult = handler.Invoke(exception);
+
+            context.Result = new ObjectResult(errorResult)
+            {
+                StatusCode = errorResult.HttpStatusCode
+            };
+
+            var logger = GetLogger(context.HttpContext);
+
+            if (isHandled)
+                logger.Warning(context.Exception, "A Handled Exception occurred.");
+            else
+                logger.Error(context.Exception, "An Unhandled Exception occured.");
+
             context.ExceptionHandled = true;
-
-            //var loggerFactory = (ILogger)context.HttpContext.RequestServices.GetService(typeof(ILogger));
-
-            //var logger = loggerFactory.ForContext<ExceptionFilter>();
-
-            //if (isHandled)
-            //    logger.Warning(context.Exception, "A Handled Exception occurred.");
-            //else
-            //    logger.Error(context.Exception, "An Unhandled Exception occured.");
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
@@ -53,9 +59,6 @@ namespace OpKokoDemo.Filters
             return _handlers.ContainsKey(exception.GetType()) ? exception : null;
         }
 
-        public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            return next();
-        }
+        private static Serilog.ILogger GetLogger(HttpContext context) => ((Serilog.ILogger)context.RequestServices.GetService(typeof(Serilog.ILogger))).ForContext<ExceptionFilter>();
     }
 }

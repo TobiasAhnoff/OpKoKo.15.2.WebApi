@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using OpKokoDemo.Attributes;
+using OpKokoDemo.Validation;
 
 namespace OpKokoDemo.Requests
 {
     [AddProductValidator]
     public class AddProductRequest : Request
     {
-        [Required]
-        public int MerchantId { get; set; }
-
         [Required]
         [StringLength(30)]
         public string Name { get; set; }

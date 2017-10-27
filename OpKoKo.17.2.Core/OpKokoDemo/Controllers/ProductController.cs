@@ -19,16 +19,28 @@ namespace OpKokoDemo.Controllers
             _service = service;
         }
 
-        // POST api/values
         [HttpPost("{merchantId:int}")]
         [Description("Ping uri with a retry limit")]
-        public async Task<IActionResult> Post(int merchantId, [FromBody] AddProductRequest request)
+        public async Task<IActionResult> Post([FromRoute]int merchantId, [FromBody] AddProductRequest request)
         {
-            if (request == null)
-                return BadRequest();
-
-            return new OkObjectResult(await _service.AddProducts(request));
+            return new OkObjectResult(await _service.AddProducts(merchantId, request));
         }
-        
+
+        [HttpDelete("{merchantId:int}/{productId:int}")]
+        [Description("Ping uri with a retry limit")]
+        public async Task<IActionResult> Delete([FromRoute]int merchantId, [FromRoute]int productId)
+        {
+            await _service.DeleteProduct(merchantId, productId);
+            return new OkResult();
+        }
+
+        [HttpGet("{merchantId:int}/")]
+        [Description("Ping uri with a retry limit")]
+        public async Task<IActionResult> Get([FromRoute]int merchantId, [FromQuery] GetProductRequest request)
+        {
+            await _service.GetProducts(merchantId, request.Pattern);
+            return new OkResult();
+        }
+
     }
 }

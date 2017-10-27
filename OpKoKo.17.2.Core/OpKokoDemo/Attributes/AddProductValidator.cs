@@ -22,7 +22,7 @@ namespace OpKokoDemo.Attributes
             object validLanguange;
             if (!Enum.TryParse(typeof(Language), request.Language, out validLanguange))
             {
-                ErrorMessage = $"{nameof(request.Price)} is not a valid language.";
+                ErrorMessage = $"{nameof(request.Language)} is not a valid language.";
                 return new ValidationResult(ErrorMessage);
             }
 
