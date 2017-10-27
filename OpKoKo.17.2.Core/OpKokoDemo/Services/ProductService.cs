@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage;
 using OpKokoDemo.Config;
-using OpKokoDemo.Extensions;
 using OpKokoDemo.Models;
 using OpKokoDemo.Requests;
 using OpKokoDemo.Responses;
