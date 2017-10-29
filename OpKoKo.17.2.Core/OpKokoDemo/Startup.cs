@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
+using OpKokoDemo.Middleware;
 using OpKokoDemo.Services;
 using OpKokoDemo.Validation;
 using Serilog;
@@ -92,13 +93,28 @@ namespace OpKokoDemo
 
             );
             #endregion
-            
-            app.UseAuthentication();
+
+            //Authentication
+            var useDebugWithNoAuthentication = false;
+#if DEBUG
+            useDebugWithNoAuthentication = Configuration.GetValue<bool>("AppSettings:UseDebugWithNoAuthentication");
+#endif
+
+            if (useDebugWithNoAuthentication && env.IsDevelopment())
+            {
+                app.UseDebugWithNoAuthentication(
+                    Configuration.GetValue<string>("AppSettings:DeveloperSub"),
+                    Configuration.GetValue<string>("AppSettings:DeveloperScope"));
+            }
+            else
+            {
+                app.UseAuthentication();
+            }
 
             app.UseMvc();
         }
 
-        #region 2 - Trust (JWT)
+#region 2 - Trust (JWT)
         private static TokenValidationParameters GetTokenValidationParameters(
             string signingCertificateSubjectDistinguishedName, string issuer, string audience) {
             var signingCert = Utils.GetCertFromCertStore(signingCertificateSubjectDistinguishedName);
@@ -116,6 +132,6 @@ namespace OpKokoDemo
             };
             return tokenValidationParameters;
         }
-        #endregion
+#endregion
     }
 }
