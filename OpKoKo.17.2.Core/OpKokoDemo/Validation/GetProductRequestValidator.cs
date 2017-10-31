@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OpKokoDemo.Models;
+﻿using OpKokoDemo.Models;
 using OpKokoDemo.Requests;
 
 namespace OpKokoDemo.Validation

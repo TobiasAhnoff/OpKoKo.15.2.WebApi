@@ -19,9 +19,15 @@ namespace OpKokoDemo
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+
 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -40,37 +46,39 @@ namespace OpKokoDemo
             services.SetupLogging();
             services.AddValidators();
 
-            #region 2 - Trust (JWT)
-            //TODO: Config pattern?
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = GetTokenValidationParameters(
-                        Configuration["Jwt:SigningCertificateSubjectDistinguishedName"],
-                        Configuration["Jwt:Issuer"],
-                        Configuration["Jwt:Audience"]);
-                });
-            #endregion
+            #region Authorization
+            //Require Beare scheme and trust JWT
+            ////services.AddAuthentication(options =>
+            ////    {
+            ////        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            ////        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            ////    })
+            ////    .AddJwtBearer(options =>
+            ////    {
+            ////        options.TokenValidationParameters = GetTokenValidationParameters(
+            ////            Configuration["Jwt:SigningCertificateSubjectDistinguishedName"],
+            ////            Configuration["Jwt:Issuer"],
+            ////            Configuration["Jwt:Audience"]);
+            ////    });
+            
 
             // Only allow authenticated users using the JWT Bearer scheme
             var requireBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
+            #endregion
 
             services.AddMvc(
                 options =>
                 {
                     options.Filters.Add(new RequestLoggingFilter());
+                    ////options.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
                     options.Filters.Add(new ExceptionFilter());
                     options.Filters.Add(new ModelStateValidatorFilter());
                     options.Filters.Add(new RequestValidatorFilter());
                     options.Filters.Add(new ResponseLoggingFilter());
-                    options.Filters.Add(new AuthorizeFilter(requireBearerAuthenticationPolicy));
+                    
                 });   
         }
 
@@ -89,9 +97,6 @@ namespace OpKokoDemo
                 });
             }
 
-            #region CORS
-            //#1 - CORS
-            //TODO: Get origin white list from config
             //Note that origins URL:s must not end with a "/"
             app.UseCors(
                 builder => builder
@@ -100,7 +105,6 @@ namespace OpKokoDemo
                     .WithOrigins("https://localhost:44304")
 
             );
-            #endregion
 
             //Authentication
             var useDebugWithNoAuthentication = false;

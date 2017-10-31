@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OpKokoDemo.Requests;
-using OpKokoDemo.Responses;
 using OpKokoDemo.Services;
 
 namespace OpKokoDemo.Controllers
@@ -19,25 +15,27 @@ namespace OpKokoDemo.Controllers
             _service = service;
         }
 
-        [HttpPost("{merchantId:int}")]
-        public async Task<IActionResult> Post([FromRoute]int merchantId, [FromBody] AddProductRequest request)
+        [HttpPost("{customerId:int}")]
+        [Description("a")]
+        public async Task<IActionResult> AddProduct([FromRoute]int customerId, [FromBody] AddProductRequest request)
         {
-            return new OkObjectResult(await _service.AddProducts(merchantId, request));
+           return new OkObjectResult(await _service.AddProducts(customerId, request));
         }
 
-        [HttpDelete("{merchantId:int}/{productId:int}")]
-        public async Task<IActionResult> Delete([FromRoute]int merchantId, [FromRoute]int productId)
+        [HttpDelete("{customerId:int}/{productId:int}")]
+        [Description("a")]
+        public async Task<IActionResult> RemoveProduct([FromRoute]int customerId, [FromRoute]int productId)
         {
-            await _service.DeleteProduct(merchantId, productId);
+            await _service.DeleteProduct(customerId, productId);
             return new OkResult();
         }
 
-        [HttpGet("{merchantId:int}/")]
-        public async Task<IActionResult> Get([FromRoute]int merchantId, [FromQuery] GetProductRequest request)
+        [HttpGet("{customerId:int}")]
+        [Description("a")]
+        public async Task<IActionResult> GetProducts([FromRoute]int customerId, [FromQuery] GetProductRequest request)
         {
-            await _service.GetProducts(merchantId, request.Pattern);
-            return new OkResult();
+            var result = await _service.GetProducts(customerId, request.Pattern);
+            return new OkObjectResult(result);
         }
-
     }
 }

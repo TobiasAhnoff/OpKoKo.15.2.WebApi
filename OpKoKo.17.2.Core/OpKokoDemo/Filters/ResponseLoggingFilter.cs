@@ -74,10 +74,6 @@ namespace OpKokoDemo.Filters
             GetLogger(context)
                 .Information($"{message} {body} {statusCode}");
 
-            ////GetLogger(context)
-            ////    .ForContext("Payload", body)
-            ////    .ForContext("StatusCode", statusCode)
-            ////    .Information(message);
         }
 
         private static ILogger GetLogger(HttpContext context) => ((ILogger)context.RequestServices.GetService(typeof(ILogger))).ForContext<ResponseLoggingFilter>();

@@ -29,10 +29,10 @@ namespace OpKokoDemo.ComponentTest
             var startupAssembly = typeof(Startup).GetTypeInfo().Assembly;
             var path = GetProjectPath(startupAssembly);
 
-            var builder2 = new ConfigurationBuilder()
+            var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(path)
                 .AddJsonFile("appsettings.json");
-            var config = builder2.Build();
+            var config = configBuilder.Build();
 
             var builder = new WebHostBuilder()
                 .ConfigureServices(

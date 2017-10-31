@@ -30,7 +30,6 @@ namespace OpKokoDemo.Filters
                 {
                     Reason = ErrorTexts.ValidationErrorCode,
                     Message = error.Exception?.Message ?? error.ErrorMessage,
-////                    Property = error.
                 }).ToList();
 
             return new ModelStateErrorObjectResult(errors);
