@@ -58,6 +58,7 @@ namespace OpKokoDemo
 
             // Only allow authenticated users using the JWT Bearer scheme
             var requireBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
 
@@ -78,7 +79,14 @@ namespace OpKokoDemo
         {
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.UseExceptionHandlerMiddleware();
+                });
             }
 
             #region CORS
