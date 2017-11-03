@@ -46,7 +46,7 @@ namespace OpKokoDemo
             services.SetupLogging();
             services.AddValidators();
 
-            #region Authentication - Require Jwt Bearer scheme
+            #region Authentication/Authorization - Require Jwt Bearer scheme
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -61,7 +61,7 @@ namespace OpKokoDemo
                     options.Events = new JwtBearerEvents {OnAuthenticationFailed = OnAuthenticationFailedHandler};
                 });
 
-            var requireJwtBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
+            var requireJwtBearerAuthorizationPolicy = new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
@@ -72,7 +72,7 @@ namespace OpKokoDemo
                 {
                     options.Filters.Add(new RequestLoggingFilter());
                     options.Filters.Add(new ExceptionFilter());
-                    options.Filters.Add(new AuthorizeFilter(requireJwtBearerAuthenticationPolicy));
+                    options.Filters.Add(new AuthorizeFilter(requireJwtBearerAuthorizationPolicy));
                     options.Filters.Add(new ModelStateValidatorFilter());
                     options.Filters.Add(new RequestValidatorFilter());
                     options.Filters.Add(new ResponseLoggingFilter());
