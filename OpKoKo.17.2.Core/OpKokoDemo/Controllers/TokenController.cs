@@ -4,6 +4,7 @@ using OpKokoDemo.Services;
 
 namespace OpKokoDemo.Controllers
 {
+    [Authorize]
     [Route("token")]
     public class TokenController : Controller
     {
@@ -17,7 +18,7 @@ namespace OpKokoDemo.Controllers
         [HttpGet]
         [Route("")]
         [AllowAnonymous]
-        public string GetToken()
+        public string GetTestToken()
         {
             return _tokenService.GetToken();
         }

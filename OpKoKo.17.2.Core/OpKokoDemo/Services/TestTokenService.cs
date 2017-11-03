@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OpKokoDemo.Config;
@@ -11,16 +10,19 @@ namespace OpKokoDemo.Services
 {
     public class TestTokenService : ITokenService
     {
-        private static X509Certificate2 _signingCertificate;
         private readonly string _signingCertificateSubjectDistinguishedName;
         private readonly string _issuer;
         private readonly string _audience;
+        private readonly string _devloperSub;
+        private readonly string _devloperScope;
 
         public TestTokenService(IOptions<JwtServiceOptions> options)
         {
             _signingCertificateSubjectDistinguishedName = options.Value.SigningCertificateSubjectDistinguishedName;
             _issuer = options.Value.Issuer;
             _audience = options.Value.Audience;
+            _devloperSub = options.Value.DeveloperSub;
+            _devloperScope = options.Value.DeveloperScope;
 
         }
         public string GetToken()
@@ -29,7 +31,8 @@ namespace OpKokoDemo.Services
             //acecss token claims, but for test implementation we just hard code some claims
             var accessTokenClaims = new List<Claim>
             {
-                new Claim("scope", "ping,products", ClaimValueTypes.String, "TestTokenService")
+                new Claim("sub", _devloperSub, ClaimValueTypes.String, "TestTokenService"),
+                new Claim("scope", _devloperScope, ClaimValueTypes.String, "TestTokenService")
             };
 
             return CreateJwtAccessToken(accessTokenClaims, TimeSpan.FromMinutes(20));

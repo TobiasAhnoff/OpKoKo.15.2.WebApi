@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
 using OpKokoDemo.Middleware;
@@ -46,24 +46,22 @@ namespace OpKokoDemo
             services.SetupLogging();
             services.AddValidators();
 
-            #region Authorization
-            //Require Beare scheme and trust JWT
-            ////services.AddAuthentication(options =>
-            ////    {
-            ////        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            ////        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            ////    })
-            ////    .AddJwtBearer(options =>
-            ////    {
-            ////        options.TokenValidationParameters = GetTokenValidationParameters(
-            ////            Configuration["Jwt:SigningCertificateSubjectDistinguishedName"],
-            ////            Configuration["Jwt:Issuer"],
-            ////            Configuration["Jwt:Audience"]);
-            ////    });
-            
+            #region Authentication - Require Jwt Bearer scheme
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = Utils.GetTokenValidationParameters(
+                        Configuration["Jwt:SigningCertificateSubjectDistinguishedName"],
+                        Configuration["Jwt:Issuer"],
+                        Configuration["Jwt:Audience"]);
+                    options.Events = new JwtBearerEvents {OnAuthenticationFailed = OnAuthenticationFailedHandler};
+                });
 
-            // Only allow authenticated users using the JWT Bearer scheme
-            var requireBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
+            var requireJwtBearerAuthenticationPolicy = new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
@@ -73,8 +71,8 @@ namespace OpKokoDemo
                 options =>
                 {
                     options.Filters.Add(new RequestLoggingFilter());
-                    ////options.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
                     options.Filters.Add(new ExceptionFilter());
+                    options.Filters.Add(new AuthorizeFilter(requireJwtBearerAuthenticationPolicy));
                     options.Filters.Add(new ModelStateValidatorFilter());
                     options.Filters.Add(new RequestValidatorFilter());
                     options.Filters.Add(new ResponseLoggingFilter());
@@ -85,65 +83,24 @@ namespace OpKokoDemo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler(appBuilder =>
-                {
-                    appBuilder.UseExceptionHandlerMiddleware();
-                });
-            }
+            app.UseExceptionHandlerMiddleware();
 
             //Note that origins URL:s must not end with a "/"
             app.UseCors(
                 builder => builder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://localhost:44304")
-
+                    .WithOrigins(Configuration["Cors:AllowedOrigins"].Split(',', StringSplitOptions.RemoveEmptyEntries))
             );
 
-            //Authentication
-            var useDebugWithNoAuthentication = false;
-#if DEBUG
-            useDebugWithNoAuthentication = Configuration.GetValue<bool>("AppSettings:UseDebugWithNoAuthentication");
-#endif
-
-            if (useDebugWithNoAuthentication && env.IsDevelopment())
-            {
-                app.UseDebugWithNoAuthentication(
-                    Configuration.GetValue<string>("AppSettings:DeveloperSub"),
-                    Configuration.GetValue<string>("AppSettings:DeveloperScope"));
-            }
-            else
-            {
-                app.UseAuthentication();
-            }
+            app.UseAuthentication();
 
             app.UseMvc();
         }
 
-#region 2 - Trust (JWT)
-        private static TokenValidationParameters GetTokenValidationParameters(
-            string signingCertificateSubjectDistinguishedName, string issuer, string audience) {
-            var signingCert = Utils.GetCertFromCertStore(signingCertificateSubjectDistinguishedName);
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new X509SecurityKey(signingCert),
-                ValidateIssuer = true,
-                ValidIssuer = issuer,
-                ValidateAudience = true,
-                ValidAudience = audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromMinutes(5)
-            };
-            return tokenValidationParameters;
+        private Task OnAuthenticationFailedHandler(AuthenticationFailedContext authenticationFailedContext) {
+            Log.Logger.Warning(authenticationFailedContext.Exception, "JWT validation error");
+            return Task.CompletedTask;
         }
-#endregion
     }
 }

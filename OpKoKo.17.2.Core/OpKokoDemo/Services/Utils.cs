@@ -1,10 +1,31 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.IdentityModel.Tokens;
 
 namespace OpKokoDemo.Services
 {
     public static class Utils
     {
         private static X509Certificate2 _signingCertificate;
+
+        public static TokenValidationParameters GetTokenValidationParameters(
+            string signingCertificateSubjectDistinguishedName, string issuer, string audience) {
+            var signingCert = Utils.GetCertFromCertStore(signingCertificateSubjectDistinguishedName);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new X509SecurityKey(signingCert),
+                ValidateIssuer = true,
+                ValidIssuer = issuer,
+                ValidateAudience = true,
+                ValidAudience = audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(5)
+            };
+            return tokenValidationParameters;
+        }
+
         public static X509Certificate2 GetCertFromCertStore(string certificateSubjectDistinguishedName)
         {
             if (_signingCertificate == null)

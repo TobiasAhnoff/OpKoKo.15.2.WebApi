@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:44314/ping",
+      "launchUrl": "https://localhost:44314/token",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
