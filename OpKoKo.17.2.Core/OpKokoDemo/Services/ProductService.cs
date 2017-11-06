@@ -21,15 +21,16 @@ namespace OpKokoDemo.Services
         public async Task<GetProductResponse> GetProducts(int merchantId, string pattern)
         {
             var products = await _repository.GetProducts(merchantId, pattern);
-            var response = new GetProductResponse {Products = products};
+            var response = new GetProductResponse { Products = products };
             return response;
         }
 
         public async Task<AddProductResponse> AddProducts(int merchantId, AddProductRequest request)
         {
-            var product = await _repository.AddProduct(new Product {Language = _language, MerchantId = merchantId, Name = request.Name, Price = request.Price});
+            var productModel = new Product(merchantId, request.Name, request.Price, _language);
+            var product = await _repository.AddProduct(productModel);
 
-            return new AddProductResponse { Product = product};
+            return new AddProductResponse { Product = product };
         }
 
         public async Task DeleteProduct(int merchantId, int productId)

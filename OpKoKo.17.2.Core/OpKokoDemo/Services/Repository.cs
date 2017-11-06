@@ -50,14 +50,7 @@ namespace OpKokoDemo.Services
             _products = new List<Product>();
             for (int i = 0; i < 100; i++)
             {
-                _products.Add(new Product
-                {
-                    Id = i,
-                    Language = GetLangugage(i),
-                    MerchantId = GetMerchant(i),
-                    Name = $"Artikel {i + 1}",
-                    Price = new Random().Next(1, 9999)
-                });
+                _products.Add(new Product(GetMerchant(i), $"Artikel {i + 1}", new Random().Next(1, 9999), GetLangugage(i)){Id = i});
             }
         }
 
