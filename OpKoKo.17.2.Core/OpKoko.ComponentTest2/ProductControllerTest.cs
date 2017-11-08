@@ -15,7 +15,7 @@ using Assert = NUnit.Framework.Assert;
 
 namespace OpKoko.ComponentTest2
 {
-    public class ControllerTest
+    public class ProductControllerTest
     {
         public class WhenAddingANewProduct : ComponentTest
         {
@@ -148,7 +148,6 @@ namespace OpKoko.ComponentTest2
             private int _customerId;
             private int _productId;
             private int _expectedProductCount;
-            private Language _language;
             private int _newProductCount;
 
             protected override void Setup()
@@ -159,7 +158,6 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _language = Language.SE;
                 _expectedProductCount = Repository.GetProducts(-1).Result.Count();
                 _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
@@ -184,7 +182,6 @@ namespace OpKoko.ComponentTest2
             private int _customerId;
             private int _productId;
             private int _expectedProductCount;
-            private Language _language;
             private int _newProductCount;
 
             protected override void Setup()
@@ -195,7 +192,6 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _language = Language.SE;
                 _expectedProductCount = Repository.GetProducts(-1).Result.Count();
                 _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
@@ -213,16 +209,10 @@ namespace OpKoko.ComponentTest2
             public void Then_the_product_is_removed() => Assert.IsTrue(_newProductCount == _expectedProductCount);
         }
 
-        public class When_attempting_to_get_products_with_unsupported_language : ComponentTest
+        public class WhenAttemptingToGetProductsWithUnsupportedLanguage : ComponentTest
         {
             private HttpResponseMessage _response;
-            private int _customerId;
-            private int _productId;
-            private int _expectedProductCount;
-            private Language _language;
-            private int _newProductCount;
             private GetProductRequest _request;
-            private ExceptionResult _error;
 
             protected override void Setup()
             {
@@ -234,7 +224,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _response = Client.GetAsync(CreateUri(_customerId, _request))
+                _response = Client.GetAsync(CreateUri(1, _request))
                     .Result;
             }
 
