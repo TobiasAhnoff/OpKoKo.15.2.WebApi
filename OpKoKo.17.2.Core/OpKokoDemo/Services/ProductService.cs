@@ -18,24 +18,24 @@ namespace OpKokoDemo.Services
             _repository = repository;
         }
 
-        public async Task<GetProductResponse> GetProducts(int merchantId, string pattern)
+        public async Task<GetProductResponse> GetProducts(int customerId, string pattern)
         {
-            var products = await _repository.GetProducts(merchantId, pattern);
+            var products = await _repository.GetProducts(customerId, pattern);
             var response = new GetProductResponse { Products = products };
             return response;
         }
 
-        public async Task<AddProductResponse> AddProducts(int merchantId, AddProductRequest request)
+        public async Task<AddProductResponse> AddProducts(int customerId, AddProductRequest request)
         {
-            var productModel = new Product(merchantId, request.Name, request.Price, _language);
+            var productModel = new Product(customerId, request.Name, request.Price, _language);
             var product = await _repository.AddProduct(productModel);
 
             return new AddProductResponse { Product = product };
         }
 
-        public async Task DeleteProduct(int merchantId, int productId)
+        public async Task DeleteProduct(int customerId, int productId)
         {
-            await _repository.DeleteProduct(merchantId, productId);
+            await _repository.DeleteProduct(customerId, productId);
         }
     }
 }

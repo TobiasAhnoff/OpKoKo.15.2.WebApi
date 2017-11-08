@@ -16,17 +16,17 @@ namespace OpKokoDemo.Services
             SeedProducts();
         }
 
-        public Task<IEnumerable<Product>> GetProducts(int merchantId, string pattern = null)
+        public Task<IEnumerable<Product>> GetProducts(int customerId, string pattern = null)
         {
-            return Task.FromResult(_products.Where(p => (merchantId == -1 || p.MerchantId == merchantId)  && (string.IsNullOrEmpty(pattern) || p.Name.Contains(pattern))));
+            return Task.FromResult(_products.Where(p => (customerId == -1 || p.CustomerId == customerId)  && (string.IsNullOrEmpty(pattern) || p.Name.Contains(pattern))));
         }
 
         public Task<Product> AddProduct(Product product)
         {
-            var merchantExists = _products.Any(p => p.MerchantId == product.MerchantId);
-            if (!merchantExists)
+            var customerExists = _products.Any(p => p.CustomerId == product.CustomerId);
+            if (!customerExists)
             {
-                throw new ArgumentException($"Merchant with id {product.MerchantId} does not exist");
+                throw new ArgumentException($"Customer with id {product.CustomerId} does not exist");
             }
             product.Id = _products.OrderByDescending(p => p.Id).First().Id + 1;
             _products.Add(product);
@@ -34,12 +34,12 @@ namespace OpKokoDemo.Services
             return Task.FromResult(product);
         }
 
-        public Task DeleteProduct(int merchantId, int productId)
+        public Task DeleteProduct(int customerId, int productId)
         {
-            var product = _products.FirstOrDefault(p => p.MerchantId == merchantId && p.Id == productId);
+            var product = _products.FirstOrDefault(p => p.CustomerId == customerId && p.Id == productId);
             if (product == null)
             {
-                throw new ArgumentException($"Product with merchant id {merchantId} and product id {productId} does not exist");
+                throw new ArgumentException($"Product with customer id {customerId} and product id {productId} does not exist");
             }
             _products.Remove(product);
             return Task.FromResult(product);
@@ -50,7 +50,7 @@ namespace OpKokoDemo.Services
             _products = new List<Product>();
             for (int i = 0; i < 100; i++)
             {
-                _products.Add(new Product(GetMerchant(i), $"Artikel {i + 1}", new Random().Next(1, 9999), GetLangugage(i)){Id = i});
+                _products.Add(new Product(GetCustomer(i), $"Artikel {i + 1}", new Random().Next(1, 9999), GetLangugage(i)){Id = i});
             }
         }
 
@@ -67,7 +67,7 @@ namespace OpKokoDemo.Services
             return Language.NO;
         }
 
-        private int GetMerchant(int index)
+        private int GetCustomer(int index)
         {
             return index % 10;
         }

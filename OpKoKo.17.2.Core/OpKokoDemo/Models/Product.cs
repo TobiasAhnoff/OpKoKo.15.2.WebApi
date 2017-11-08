@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public int MerchantId { get; }
+        public int CustomerId { get; }
 
         public string Name { get; }
 
@@ -16,7 +16,7 @@
         {
             // Do more complex validation here
 
-            MerchantId = merhantId;
+            CustomerId = merhantId;
             Name = name;
             Price = price;
             Language = language;

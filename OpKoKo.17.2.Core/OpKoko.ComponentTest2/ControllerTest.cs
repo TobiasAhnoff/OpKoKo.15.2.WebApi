@@ -22,12 +22,12 @@ namespace OpKoko.ComponentTest2
             private AddProductRequest _request;
 
             private HttpResponseMessage _response;
-            private int _merchantId;
+            private int _customerId;
             private AddProductResponse _result;
 
             protected override void Setup()
             {
-                _merchantId = 5;
+                _customerId = 5;
                 _request = new AddProductRequest
                 {
                     Description = "Description",
@@ -39,7 +39,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _response = Client.PostAsync($"products/{_merchantId}", RequestBuilder.BuildJsonHttpContent(_request))
+                _response = Client.PostAsync($"products/{_customerId}", RequestBuilder.BuildJsonHttpContent(_request))
                     .Result;
             }
 
@@ -64,14 +64,14 @@ namespace OpKoko.ComponentTest2
                 Assert.AreEqual(_request.Language, _result.Product.Language.ToString());
 
             [Test]
-            public void Then_merchant_id_is_mapped() => Assert.AreEqual(_merchantId, _result.Product.MerchantId);
+            public void Then_customer_id_is_mapped() => Assert.AreEqual(_customerId, _result.Product.CustomerId);
         }
 
-        public class WhenAddingANewProductToANonExistingMerchant : ComponentTest
+        public class WhenAddingANewProductToANonExistingCustomer : ComponentTest
         {
             private AddProductRequest _request;
 
-            private int _merchantId;
+            private int _customerId;
             private HttpResponseMessage _response;
             private int _expectedProductCount;
             private int _newProductCount;
@@ -79,7 +79,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Setup()
             {
-                _merchantId = int.MaxValue;
+                _customerId = int.MaxValue;
                 _request = Fixture.Build<AddProductRequest>()
                     .With(p => p.Price, 1000)
                     .With(p => p.Language, _language.ToString())
@@ -89,7 +89,7 @@ namespace OpKoko.ComponentTest2
             protected override void Act()
             {
                 _expectedProductCount = Repository.GetProducts(-1).Result.Count();
-                _response = Client.PostAsync($"products/{_merchantId}", RequestBuilder.BuildJsonHttpContent(_request))
+                _response = Client.PostAsync($"products/{_customerId}", RequestBuilder.BuildJsonHttpContent(_request))
                     .Result;
             }
 
@@ -110,13 +110,13 @@ namespace OpKoko.ComponentTest2
         {
             private AddProductRequest _request;
 
-            private int _merchantId;
+            private int _customerId;
             private HttpResponseMessage _response;
             private List<Error> _errors;
 
             protected override void Setup()
             {
-                _merchantId = 10;
+                _customerId = 10;
                 _request = Fixture.Build<AddProductRequest>()
                     .With(p => p.Price, 1000)
                     .Create();
@@ -124,7 +124,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _response = Client.PostAsync($"products/{_merchantId}", RequestBuilder.BuildJsonHttpContent(_request))
+                _response = Client.PostAsync($"products/{_customerId}", RequestBuilder.BuildJsonHttpContent(_request))
                     .Result;
             }
 
@@ -145,7 +145,7 @@ namespace OpKoko.ComponentTest2
         public class WhenDeletingAProduct : ComponentTest
         {
             private HttpResponseMessage _response;
-            private int _merchantId;
+            private int _customerId;
             private int _productId;
             private int _expectedProductCount;
             private Language _language;
@@ -153,7 +153,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Setup()
             {
-                _merchantId = 1;
+                _customerId = 1;
                 _productId = 1;
             }
 
@@ -161,7 +161,7 @@ namespace OpKoko.ComponentTest2
             {
                 _language = Language.SE;
                 _expectedProductCount = Repository.GetProducts(-1).Result.Count();
-                _response = Client.DeleteAsync($"products/{_merchantId}/{_productId}")
+                _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
             }
 
@@ -181,7 +181,7 @@ namespace OpKoko.ComponentTest2
         public class WhenDeletingAProductThatDoesNotExist : ComponentTest
         {
             private HttpResponseMessage _response;
-            private int _merchantId;
+            private int _customerId;
             private int _productId;
             private int _expectedProductCount;
             private Language _language;
@@ -189,7 +189,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Setup()
             {
-                _merchantId = Fixture.Create<int>();
+                _customerId = Fixture.Create<int>();
                 _productId = Fixture.Create<int>();
             }
 
@@ -197,7 +197,7 @@ namespace OpKoko.ComponentTest2
             {
                 _language = Language.SE;
                 _expectedProductCount = Repository.GetProducts(-1).Result.Count();
-                _response = Client.DeleteAsync($"products/{_merchantId}/{_productId}")
+                _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
             }
 
@@ -216,7 +216,7 @@ namespace OpKoko.ComponentTest2
         public class When_attempting_to_get_products_with_unsupported_language : ComponentTest
         {
             private HttpResponseMessage _response;
-            private int _merchantId;
+            private int _customerId;
             private int _productId;
             private int _expectedProductCount;
             private Language _language;
@@ -234,7 +234,7 @@ namespace OpKoko.ComponentTest2
 
             protected override void Act()
             {
-                _response = Client.GetAsync(CreateUri(_merchantId, _request))
+                _response = Client.GetAsync(CreateUri(_customerId, _request))
                     .Result;
             }
 
@@ -246,11 +246,11 @@ namespace OpKoko.ComponentTest2
             
         }
 
-        public static string CreateUri(int merchantId, Request request)
+        public static string CreateUri(int customerId, Request request)
         {
             var queryString = request.ToQueryString();
 
-            return $"products/{merchantId}?{queryString}";
+            return $"products/{customerId}?{queryString}";
         }
 
         public static T GetResponseData<T>(IActionResult actionResult)
