@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
-using System.Text;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
@@ -50,8 +48,8 @@ namespace OpKokoDemo.ComponentTest
         public void TestInitializer()
         {
             Initialize();
-
-            Server = TestServerFactory.CreateConfiguredTestServer(OverrideConfiguredServices());
+            
+            Server = TestServerFactory.CreateConfiguredTestServerWithoutJwtBearer("test.testson@omegapoint.se", "all", OverrideConfiguredServices());
             Client = Server.CreateClient();
 
             Trace.WriteLine("Running setup...");

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-namespace OpKoko.ComponentTest
+namespace OpKokoDemo.ComponentTest
 {
     public static class UrlHelper
     {

@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
-using OpKoko.ComponentTest;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
+using OpKokoDemo.Middleware;
 using OpKokoDemo.Validation;
 
 namespace OpKokoDemo.ComponentTest
@@ -22,7 +22,7 @@ namespace OpKokoDemo.ComponentTest
         private const string SolutionName = "OpKokoDemo.sln";
         private const string WebApiSourcePath = "";
 
-        public static TestServer CreateConfiguredTestServer(Action<IServiceCollection> testSpecificServiceConfiguration = null)
+        public static TestServer CreateConfiguredTestServerWithoutJwtBearer(string testSub, string testScope, Action<IServiceCollection> testSpecificServiceConfiguration = null)
         {
             var startupAssembly = typeof(Startup).GetTypeInfo().Assembly;
             var path = GetProjectPath(startupAssembly);
@@ -36,13 +36,6 @@ namespace OpKokoDemo.ComponentTest
                 .ConfigureServices(
                     services =>
                     {
-                        services.AddMvc(options =>
-                        {
-                            options.Filters.Add(new ExceptionFilter());
-                            options.Filters.Add(new ModelStateValidatorFilter());
-                            options.Filters.Add(new RequestValidatorFilter());
-                            ////options.Filters.Add(new AuthorizeFilter(requireBearerAuthenticationPolicy));
-                        });
                         OverrideMvcDefaultControllerLocationProvider(services);
 
                         services.AddOptions();
@@ -50,6 +43,37 @@ namespace OpKokoDemo.ComponentTest
                         services.AddRepositories();
                         services.SetupLogging();
                         services.AddValidators();
+
+                        #region Authentication/Authorization - Require Jwt Bearer scheme
+                        //services.AddAuthentication(options =>
+                        //    {
+                        //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        //    })
+                        //    .AddJwtBearer(options =>
+                        //    {
+                        //        options.TokenValidationParameters = Utils.GetTokenValidationParameters(
+                        //            config["Jwt:SigningCertificateSubjectDistinguishedName"],
+                        //            config["Jwt:Issuer"],
+                        //            config["Jwt:Audience"]);
+                        //        //options.Events = new JwtBearerEvents { OnAuthenticationFailed = OnAuthenticationFailedHandler };
+                        //    });
+
+                        //var requireJwtBearerAuthorizationPolicy = new AuthorizationPolicyBuilder()
+                        //    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                        //    .RequireAuthenticatedUser()
+                        //    .Build();
+                        #endregion
+
+                        services.AddMvc(options =>
+                        {
+                            options.Filters.Add(new RequestLoggingFilter());
+                            options.Filters.Add(new ExceptionFilter());
+                            //options.Filters.Add(new AuthorizeFilter(requireJwtBearerAuthorizationPolicy));
+                            options.Filters.Add(new ModelStateValidatorFilter());
+                            options.Filters.Add(new RequestValidatorFilter());
+                            options.Filters.Add(new ResponseLoggingFilter());
+                        });
 
 
                         testSpecificServiceConfiguration?.Invoke(services);
@@ -59,7 +83,19 @@ namespace OpKokoDemo.ComponentTest
                 .Configure(
                     app =>
                     {
-                        app.UseTestNoAuthMiddleware("tobias.ahnoff@omegapoint.se", "all");
+                        app.UseExceptionHandlerMiddleware();
+
+                        //Note that origins URL:s must not end with a "/"
+                        //app.UseCors(
+                        //    builder => builder
+                        //        .AllowAnyHeader()
+                        //        .AllowAnyMethod()
+                        //        .WithOrigins(config["Cors:AllowedOrigins"].Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        //);
+
+                        app.UseTestNoAuthMiddleware(testSub, testScope);
+                        //app.UseAuthentication();
+
                         app.UseMvc();
                     });
 

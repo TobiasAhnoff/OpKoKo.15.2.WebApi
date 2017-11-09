@@ -5,7 +5,6 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using OpKokoDemo.ComponentTest;
 using OpKokoDemo.Exceptions;
 using OpKokoDemo.Models;
 using OpKokoDemo.Requests;
@@ -13,7 +12,7 @@ using OpKokoDemo.Responses;
 using Ploeh.AutoFixture;
 using Assert = NUnit.Framework.Assert;
 
-namespace OpKoko.ComponentTest
+namespace OpKokoDemo.ComponentTest
 {
     public class ProductControllerTest
     {
