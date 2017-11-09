@@ -12,11 +12,11 @@
 
         public Language Language { get; }
 
-        public Product(int merhantId, string name, int price, Language language)
+        public Product(int customerId, string name, int price, Language language)
         {
             // Do more complex validation here
 
-            CustomerId = merhantId;
+            CustomerId = customerId;
             Name = name;
             Price = price;
             Language = language;
