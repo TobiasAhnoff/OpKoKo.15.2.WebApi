@@ -13,11 +13,11 @@ using OpKokoDemo.Responses;
 using Ploeh.AutoFixture;
 using Assert = NUnit.Framework.Assert;
 
-namespace OpKoko.ComponentTest2
+namespace OpKoko.ComponentTest
 {
     public class ProductControllerTest
     {
-        public class WhenAddingANewProduct : ComponentTest
+        public class WhenAddingANewProduct : ComponentTestBase
         {
             private AddProductRequest _request;
 
@@ -67,7 +67,7 @@ namespace OpKoko.ComponentTest2
             public void Then_customer_id_is_mapped() => Assert.AreEqual(_customerId, _result.Product.CustomerId);
         }
 
-        public class WhenAddingANewProductToANonExistingCustomer : ComponentTest
+        public class WhenAddingANewProductToANonExistingCustomer : ComponentTestBase
         {
             private AddProductRequest _request;
 
@@ -106,7 +106,7 @@ namespace OpKoko.ComponentTest2
 
         }
 
-        public class WhenAddingANewProductWithInvalidCountryCode : ComponentTest
+        public class WhenAddingANewProductWithInvalidCountryCode : ComponentTestBase
         {
             private AddProductRequest _request;
 
@@ -142,7 +142,7 @@ namespace OpKoko.ComponentTest2
 
         }
 
-        public class WhenDeletingAProduct : ComponentTest
+        public class WhenDeletingAProduct : ComponentTestBase
         {
             private HttpResponseMessage _response;
             private int _customerId;
@@ -176,7 +176,7 @@ namespace OpKoko.ComponentTest2
             public void Then_the_product_is_removed() => Assert.IsTrue(_newProductCount == (_expectedProductCount - 1));
         }
 
-        public class WhenDeletingAProductThatDoesNotExist : ComponentTest
+        public class WhenDeletingAProductThatDoesNotExist : ComponentTestBase
         {
             private HttpResponseMessage _response;
             private int _customerId;
@@ -209,7 +209,7 @@ namespace OpKoko.ComponentTest2
             public void Then_the_product_is_removed() => Assert.IsTrue(_newProductCount == _expectedProductCount);
         }
 
-        public class WhenAttemptingToGetProductsWithUnsupportedLanguage : ComponentTest
+        public class WhenAttemptingToGetProductsWithUnsupportedLanguage : ComponentTestBase
         {
             private HttpResponseMessage _response;
             private GetProductRequest _request;
@@ -227,13 +227,6 @@ namespace OpKoko.ComponentTest2
                 _response = Client.GetAsync(CreateUri(1, _request))
                     .Result;
             }
-
-         
-
-            [Test]
-            public void Then_the_response_is_bad_request() => Assert.AreEqual(HttpStatusCode.BadRequest, _response.StatusCode);
-
-            
         }
 
         public static string CreateUri(int customerId, Request request)

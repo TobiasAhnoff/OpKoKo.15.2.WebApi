@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace OpKoko.ComponentTest2
+namespace OpKoko.ComponentTest
 {
     public static class UrlHelper
     {

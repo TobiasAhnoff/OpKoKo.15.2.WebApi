@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
+using OpKoko.ComponentTest;
 using OpKokoDemo.Extensions;
 using OpKokoDemo.Filters;
 using OpKokoDemo.Validation;
@@ -43,9 +41,7 @@ namespace OpKokoDemo.ComponentTest
                             options.Filters.Add(new ExceptionFilter());
                             options.Filters.Add(new ModelStateValidatorFilter());
                             options.Filters.Add(new RequestValidatorFilter());
-
                             ////options.Filters.Add(new AuthorizeFilter(requireBearerAuthenticationPolicy));
-
                         });
                         OverrideMvcDefaultControllerLocationProvider(services);
 
@@ -63,6 +59,7 @@ namespace OpKokoDemo.ComponentTest
                 .Configure(
                     app =>
                     {
+                        app.UseTestNoAuthMiddleware("tobias.ahnoff@omegapoint.se", "all");
                         app.UseMvc();
                     });
 

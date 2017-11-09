@@ -11,9 +11,9 @@ using Ploeh.AutoFixture;
 
 namespace OpKokoDemo.ComponentTest
 {
-    public abstract class ComponentTest
+    public abstract class ComponentTestBase
     {
-        public ComponentTest()
+        public ComponentTestBase()
         {
             Fixture = new Fixture();
         }
