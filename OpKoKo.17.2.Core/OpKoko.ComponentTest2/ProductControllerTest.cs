@@ -226,6 +226,10 @@ namespace OpKokoDemo.ComponentTest
                 _response = Client.GetAsync(CreateUri(1, _request))
                     .Result;
             }
+
+            [Test]
+            public void Then_the_response_is_not_implemented() => Assert.AreEqual(HttpStatusCode.NotImplemented, _response.StatusCode);
+
         }
 
         public static string CreateUri(int customerId, Request request)

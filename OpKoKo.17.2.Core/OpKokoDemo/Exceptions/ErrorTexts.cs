@@ -16,6 +16,6 @@
         public const string NotFoundErrorCode = "NotFound";
         public const string NotFoundErrorCodeMessage = "One or more of the underlying resources could not be found";
         public const string NotImplementedCode = "Not_Implemented";
-        public const string NotImplementedMessage = "The resource does not implement the request in the current checkout state";
+        public const string NotImplementedMessage = "The resource does not implement the request";
     }
 }
