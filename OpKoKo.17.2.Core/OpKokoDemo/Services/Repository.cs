@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OpKokoDemo.Models;
-using OpKokoDemo.Requests;
 
 namespace OpKokoDemo.Services
 {
@@ -16,9 +15,9 @@ namespace OpKokoDemo.Services
             SeedProducts();
         }
 
-        public Task<IEnumerable<Product>> GetProducts(int customerId, string pattern = null)
+        public Task<IEnumerable<Product>> GetProducts(CustomerId customerId, string pattern = null)
         {
-            return Task.FromResult(_products.Where(p => (customerId == -1 || p.CustomerId == customerId)  && (string.IsNullOrEmpty(pattern) || p.Name.Contains(pattern))));
+            return Task.FromResult(_products.Where(p => (customerId.Id == -1 || p.CustomerId == customerId.Id)  && (string.IsNullOrEmpty(pattern) || p.Name.Contains(pattern))));
         }
 
         public Task<Product> AddProduct(Product product)
@@ -34,9 +33,9 @@ namespace OpKokoDemo.Services
             return Task.FromResult(product);
         }
 
-        public Task DeleteProduct(int customerId, int productId)
+        public Task DeleteProduct(CustomerId customerId, ProductId productId)
         {
-            var product = _products.FirstOrDefault(p => p.CustomerId == customerId && p.Id == productId);
+            var product = _products.FirstOrDefault(p => p.CustomerId == customerId.Id && p.Id == productId.Id);
             if (product == null)
             {
                 throw new ArgumentException($"Product with customer id {customerId} and product id {productId} does not exist");

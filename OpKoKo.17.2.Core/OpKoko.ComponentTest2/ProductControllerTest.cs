@@ -49,8 +49,7 @@ namespace OpKokoDemo.ComponentTest
             }
 
             [Test]
-            public void Then_the_response_returns_http_status_ok() =>
-                Assert.AreEqual(HttpStatusCode.OK, _response.StatusCode);
+            public void Then_the_response_returns_http_status_ok() => Assert.AreEqual(HttpStatusCode.OK, _response.StatusCode);
 
             [Test]
             public void Then_name_is_mapped() => Assert.AreEqual(_request.Name, _result.Product.Name);
@@ -87,14 +86,14 @@ namespace OpKokoDemo.ComponentTest
 
             protected override void Act()
             {
-                _expectedProductCount = Repository.GetProducts(-1).Result.Count();
+                _expectedProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
                 _response = Client.PostAsync($"products/{_customerId}", RequestBuilder.BuildJsonHttpContent(_request))
                     .Result;
             }
 
             protected override void AssertionPreparation()
             {
-                _newProductCount = Repository.GetProducts(-1).Result.Count();
+                _newProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
             }
 
             [Test]
@@ -157,14 +156,14 @@ namespace OpKokoDemo.ComponentTest
 
             protected override void Act()
             {
-                _expectedProductCount = Repository.GetProducts(-1).Result.Count();
+                _expectedProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
                 _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
             }
 
             protected override void AssertionPreparation()
             {
-                _newProductCount = Repository.GetProducts(-1).Result.Count();
+                _newProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
             }
 
             [Test]
@@ -191,14 +190,14 @@ namespace OpKokoDemo.ComponentTest
 
             protected override void Act()
             {
-                _expectedProductCount = Repository.GetProducts(-1).Result.Count();
+                _expectedProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
                 _response = Client.DeleteAsync($"products/{_customerId}/{_productId}")
                     .Result;
             }
 
             protected override void AssertionPreparation()
             {
-                _newProductCount = Repository.GetProducts(-1).Result.Count();
+                _newProductCount = Repository.GetProducts(new CustomerId(-1)).Result.Count();
             }
 
             [Test]

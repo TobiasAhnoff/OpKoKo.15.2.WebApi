@@ -2,9 +2,27 @@
 {
     public class Product
     {
-        public int Id { get; set; }
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                var idModel = new ProductId(value);
+                _id = idModel.Id;
+            }
+        }
 
-        public int CustomerId { get; }
+        private int _customerId;
+        public int CustomerId
+        {
+            get => _customerId;
+            set
+            {
+                var idModel = new CustomerId(value);
+                _customerId = idModel.Id;
+            }
+        }
 
         public string Name { get; }
 

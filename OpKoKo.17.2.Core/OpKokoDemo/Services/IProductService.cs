@@ -10,7 +10,7 @@ namespace OpKokoDemo.Services
     public interface IProductService
     {
         Task<GetProductResponse> GetProducts(int customerId, string pattern);
-        Task<AddProductResponse> AddProducts(int customerId, AddProductRequest request);
+        Task<AddProductResponse> AddProduct(int customerId, AddProductRequest request);
         Task DeleteProduct(int customerId, int productId);
     }
 }

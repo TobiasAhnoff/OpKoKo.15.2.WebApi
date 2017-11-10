@@ -16,8 +16,7 @@ namespace OpKokoDemo.Attributes
                 return new ValidationResult(ErrorMessage);
             }
 
-            object validLanguange;
-            if (!Enum.TryParse(typeof(Language), request.Language, out validLanguange))
+            if (!Enum.TryParse(typeof(Language), request.Language, out object validLanguange))
             {
                 ErrorMessage = $"{nameof(request.Language)} is not a valid language.";
                 return new ValidationResult(ErrorMessage);

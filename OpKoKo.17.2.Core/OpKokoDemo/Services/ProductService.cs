@@ -20,14 +20,18 @@ namespace OpKokoDemo.Services
 
         public async Task<GetProductResponse> GetProducts(int customerId, string pattern)
         {
-            var products = await _repository.GetProducts(customerId, pattern);
+            var customerIdModel = new CustomerId(customerId);
+
+            var products = await _repository.GetProducts(customerIdModel, pattern);
+
             var response = new GetProductResponse { Products = products };
             return response;
         }
 
-        public async Task<AddProductResponse> AddProducts(int customerId, AddProductRequest request)
+        public async Task<AddProductResponse> AddProduct(int customerId, AddProductRequest request)
         {
             var productModel = new Product(customerId, request.Name, request.Price, _language);
+
             var product = await _repository.AddProduct(productModel);
 
             return new AddProductResponse { Product = product };
@@ -35,7 +39,10 @@ namespace OpKokoDemo.Services
 
         public async Task DeleteProduct(int customerId, int productId)
         {
-            await _repository.DeleteProduct(customerId, productId);
+            var customerIdModel = new CustomerId(customerId);
+            var productIdModel = new ProductId(productId);
+
+            await _repository.DeleteProduct(customerIdModel, productIdModel);
         }
     }
 }

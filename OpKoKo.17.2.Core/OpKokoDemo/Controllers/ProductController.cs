@@ -21,7 +21,7 @@ namespace OpKokoDemo.Controllers
         [Description("Adds a new product")]
         public async Task<IActionResult> AddProduct([FromRoute]int customerId, [FromBody] AddProductRequest request)
         {
-           return new OkObjectResult(await _service.AddProducts(customerId, request));
+           return new OkObjectResult(await _service.AddProduct(customerId, request));
         }
 
         [HttpDelete("{customerId:int}/{productId:int}")]
